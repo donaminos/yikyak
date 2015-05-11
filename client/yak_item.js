@@ -1,3 +1,9 @@
+Template.yakItem.helpers({
+	commentsCount: function() {
+    	return Comments.find({postId:this._id}).count();
+  	}
+})
+
 Template.yakItem.events({
 	'click': function(){
 		Session.set('selected_yak', this._id);
