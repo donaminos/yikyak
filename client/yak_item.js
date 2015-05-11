@@ -3,16 +3,32 @@ Template.yakItem.events({
 		Session.set('selected_yak', this._id);
 	},
 	'click a.yes': function(){
-		var yakId = Session.get('selected_yak');
-		Yaks.update(yakId, {$inc: {score: 1}});
+		
+		if( Meteor.user()){
+			var yak = Yaks.findOne({_id: this._id});
+			console.log(yak);
+			if( $.inArray(Meteor.userId(), yak.voted) !== -1 ){
+				alert("Already voted!");
+			}else{
+				var yakId = Session.get('selected_yak');
+				Yaks.update(yakId, {$inc: {score: 1}});
+				Yaks.update(yakId, {$addToSet: {voted : Meteor.userId()}});
+			}
+		}
 	},
 	'click a.no': function(){
-		var yakId = Session.get('selected_yak');
-		Yaks.update(yakId, {$inc: {score: -1}});
-
-		var postId = Yaks.findOne({_id:this._id});
-	    if (postId.score <= -3) {
-	      Yaks.remove({_id:this._id})
+	   if (Meteor.user()) {
+	      var yak = Yaks.findOne({_id:this._id})
+	      if ($.inArray(Meteor.userId(), yak.voted) !== -1) {
+	        alert("Already voted!");
+	      } else {
+	        var yakId = Session.get('selected_yak');
+	        Yaks.update(yakId, {$inc: {'score': -1 }});
+	        Yaks.update(yakId, {$addToSet: {voted : Meteor.userId()}});
+	        if (postId.score <= -3) {
+	          Yaks.remove({_id:this._id})
+	        }
+	      }
 	    }
 	}
 });

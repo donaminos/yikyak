@@ -1,6 +1,6 @@
 Template.yaksList.helpers({
   yaks: function() {
-    return Yaks.find();
+    return Yaks.find({}, {score: -1});
   }
 });
 
